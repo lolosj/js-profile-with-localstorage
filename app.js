@@ -1,51 +1,55 @@
+class Wallet {
+    constructor(wallet, chain) {
+        this.wallet = wallet;
+        this.chain = chain;
+    }
+}
+
 class User {
     constructor() {
-        if (localStorage.getItem("userName") == null) {
-            console.log("new user");
+        if (localStorage.getItem("wallets") == null) {
+            this.wallets = [];
+            console.log("new user/wallet");
         } else {
-            console.log("user = ", localStorage.getItem("userName"));
+            console.log("known user/wallet");
+            this.wallets = this.retrieveWallets();
+            console.log(this.wallets);
        }
     }
 
-    generateForm() {
-                    
-        var formElement = document.createElement("form");
-        var nameElement = document.createElement("input");
-        var br = document.createElement("br");
-        var buttonElement = document.createElement("input");
-        var i = document.createElement("i")
+    retrieveWallets() {
+        var wallets = [];
+        wallets = JSON.parse(localStorage.getItem("wallets"));
+        console.log()
+        return wallets;
+    }
 
-        formElement.setAttribute("method", "post");
-        formElement.setAttribute("id", "form1");
-        formElement.setAttribute("action", "submit.php");
-       
-        nameElement.setAttribute("type", "text");
-        nameElement.setAttribute("name", "username");
-        nameElement.setAttribute("id", "username");
-        nameElement.setAttribute("placeholder", "Full Name");
-    
-        buttonElement.setAttribute("type", "button");
-        buttonElement.setAttribute("value", "");
-        buttonElement.setAttribute("onclick", "user.formulaire()");
-        buttonElement.innerHTML = 'ici<i class="fa fa-close"></i>';            
-
-        
-        formElement.appendChild(nameElement); 
-        formElement.appendChild(br);
-        formElement.appendChild(buttonElement);
-
-        return formElement;
-        
-           
+    addWalletToUserWallets(wallet) {
+        this.wallets.push(wallet);
+        localStorage.setItem("wallets", JSON.stringify(this.wallets));
     }
     
 
-    formulaire() {
-        var n = document.getElementById("username");
-        console.log(n.value);
-        localStorage.setItem("userName", n.value);
-        this.userName = n.value;
+
+    
+
+
+
+
+    
+    walletValidation() {
+        var walletElement = document.getElementById("wallet-id");
+        var wallet = walletElement.value;
+        var chainId = document.getElementById("chain-id");
+        var chain = chainId.value;
+        console.log("Wallet validation ici:", wallet, chain);
+        
+        var walletObject = new Wallet(wallet, chain);
+
+        this.addWalletToUserWallets(walletObject);
+        
     }
+
     
 };
 
@@ -61,7 +65,6 @@ class IndexView {
         
     }
 
-    
     onRoute() {
         var hashlocation = window.location.hash;
         console.log("On route : ", hashlocation);
@@ -77,10 +80,23 @@ class IndexView {
     }    
 
     updateContent(content, url) {
-        this.content.innerHTML = url + ": " + content;
-        if (url == "page1.html") {
-            let form = user.generateForm();
-            document.getElementsByTagName("body")[0].appendChild(form);
+        this.content.innerHTML = content;
+        if (url == "seewallets.html") {
+            this.displayUserWallets();
+            //let form = user.generateForm();
+            //document.getElementsByTagName("body")[0].appendChild(form);
+        }
+    }
+
+    displayUserWallets() {
+        var list = document.getElementById("wallets-list-id");        
+        
+        for (var i = 0; i < user.wallets.length; i++){
+            var listElement = document.createElement("li");
+            list.appendChild(listElement);
+            listElement.textContent = user.wallets[i].wallet + " / (" + user.wallets[i].chain + ")";
+
+            console.log("ici");
         }
     }
 
